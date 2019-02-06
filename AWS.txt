@@ -1,0 +1,69 @@
+load balancer(ELB)- traffic forwarding n div into multiple ecs instances
+single dns access to app- no failiure- health checks - availability among zones
+Types- (static hostname)
+classic v1 SSL-deprecated
+Application ALB v2 - Layer 7 - HTTP apps - mul apps same machine - micro serv /container apss - routes to target groups(url/hostname) then to healthy instances
+	-Stickiness (cookies ALB level) - X-Forwarded-For (Private Ip hidden)
+Network  v2 Layer 4- TCP - High Performace 
+
+can be exposed internally/ext
+
+
+Auto Scaling groups- ADD Intsances/ remove- scale in/ out to handle load- define range - can be done via LBs
+- launch Config- AMI+Type+Data+EBSVol+SSH+SGs
+- Capacity
+- Network/ subnets info
+- LB info
+ - Scaling policies
+- cloudwatch alarms - metric(CPU/ network usgae/ ..)/custom
+
+helath check n replacement
+
+
+EBS Volumes - Elastic Block store _net drive attach to instances -AZ specific -GBs IOPs-GP@
+-GP2 -bALANCED SSD
+-IO1 - HIGH PERFORMANCE SSD
+-STI - Big Data, High access
+-SCI - Big Data, low freq usage
+
+-resizing using repartitioning
+-snapshots- backup
+Encrypted EBS- Rest/ In flight /SNAPSHOT KMS_(AES 256)
+
+Instance - _Phy Root Volume - No resizing - User op Backup - lost on termination -better i/o
+
+Route53- DNS Management - A(IPV4)/AAAA(IPV6)/CNAME(URL)/Alias(AWS rersource)
+	- public: Resove by anyone - private domains- VPCS
+	-LB , Health check, Routing
+
+RDS- Relational DB Service -SQL query- Os aptching - backups- Monitoring- performance - more AZs - no SSH
+Read Scalabilty - read Replicas - ASYNC - latency - connect strings
+Standby- replica in diff AZ - increase avail in failover 
+Backups- Daily - Trans log- Rollback enhanced - Retention - long term backups
+Security - encryption / Enforce SSl -SGs - IAM policy - Login info
+Aurora- High performance - SQL ?POstgres compatible - Inc Storage _ failover - scalable - cloud friendly
+
+ElastiCache- RDS for Caches- In mem - high performance - Load reduction on databases 
+- Query to elaticache - Cache hit/ Cache miss - RDS
+_ Invalidation startegy for upd data
+- Session handling  - no re-authentication
+- Redis (In mem key- value pair, Reboot survival,low latency,etc_) / Memcached (in mem obj)
+
+
+VPC- Virtual Private Cloud- contains subnets- pvt & public per Az
+public- LB/ Files/ Auth/ static WEbPages
+private- app server / dbs
+VPN to VPC - diff per region - traffic monitor logs
+
+3-Tier Arch
+User->Route 53 -> Public Subnet [ELB] -> Private Subnet [ASG-> Ecache/ RDS]
+
+Amazon S3 - Infinite scaling 
+Buckets to store objects - Global unique name - region level - key (full path) - max 5TB - Multi part upload for >5GB
+File versioning automatic after enabling -  rollback / uninteded deletes- delete restore -- delete marker
+s3 Encrytion - SSE-S3 , SSE-KMS , SSE- C , Client Side header set "x-amz-server-side-encryption":<...>
+SSE- S3:  by S3, AES-256 , server , "AES-256"
+SSE-KMS" "aws:kms"
+
+
+S3 Security - User Based (IAM policies) / Resource Based (Bucket policies - JSON)

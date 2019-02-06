@@ -1,0 +1,105 @@
+Kafka- Multi source & target system handling -real time data feed - real time insights 
+- stream processing API - Big Data integration - metrics - Transportation mech
+
+Topic- speciifc stream of data - into partitions - ordered - offset for each part - unbounded - immutable
+- data holding - random data assigning
+
+cluster - brokers
+Broker - server = hold topics - Partition distributed among brokers randomly for load balancing
+- bootstrap broker - connectedto
+
+replication factor - fault tol- In- sync replicas - Replicas partition spread 
+- One leader- serves data, rest ISRs- By zookeeper - rf can't be more than no of brokers
+
+Producers- broker identification- writers to Partitions - 3 send modes of acknowledgment -acks= 0, all(leader +replicas), 1(default- leader)
+- Key based writing - specific id to specific partition mapping - key hashing
+
+Consumer - reads from kafka cluster in groups - Each member exclusive partition - extra consumers inactive
+- To handle consumer failover - reads in order within partition - parallel b/w partitions
+
+Consumer offsets- current offset store - _consumer_offsets topic- via commit -recovery
+-Delivery semantics - selection of offset commits - at most once( as when recieved), atleast once(after processing,duplicacy of msgs), 
+exactly once(kafka to kafka/idempodent consumers)
+
+Broker discovery - Booststrap (all brokers can serve as ) Brokers metadata - Client metadata req
+
+Zookeepers - election leader - broker management - in odd nos - leader of Zookeeper  writes - rest read
+- connected to bROKERS
+
+# Kafka Server: 127.0.0.1:9092
+# zookeeper Server: 127.0.0.1:2181
+
+Start Zookeeper -> Start Kafka cluster
+->working on topics:  kafka-topics --zookeeper:127.0.0.1:2181 
+Create: kafka-topics --zookeeper:127.0.0.1:2181 --topic <topic_name> --create --partitions <no of partitions> --replication-factor <no >
+	kafka-topics --zookeeper:127.0.0.1:2181 --list
+	kafka-topics --zookeeper:127.0.0.1:2181 --topic <topic_name> --describe
+	kafka-topics --zookeeper:127.0.0.1:2181 --topic <topic_name> --delete
+	
+->Producers:  kafka-console-producer
+	kafka-console-producer --broker_list 127.0.0.1:9092 --topic <name> --producer-property <props>
+
+->Consumers: kafka-console-consumer --bootstrap-server:127.0.0.1:9092 --topic <topic_name>   {reads only from pt of launch} 
+    
+->Consumergroups: kafka-console-consumer --bootstrap-server:127.0.0.1:9092 --topic <topic_name> --group <group_name>
+		  kafka-consumer-groups	 --bootstrap-server:localhost:9092 
+		  kafka-consumer-groups	 --bootstrap-server:localhost:9092 --reset_offsets --<props> 
+
+
+Java producers:
+-Properties properties= new Properties();  //properties for Kafka
+-properties.setProperty("<prop_name>",<prop_value>)  -- bootstrap servers, key serializer, value serializer or ProducerConfig
+-KafkaProducer<key_type,value_type> producer  //create producer
+-ProducerRecord
+-producer.send(); + producer callback( to hndle exceptions and logging)
+-producer.flush()/end;
+-producer callback
+
+Java Consumers:
+-consumerConfig -key deserializer, value deserializer -bootstrap server, -groupId -Auto offset reset
+KafakaConsumer // create consumer
+consumer.subscribe()
+ConsumerRecords<> = Consumer.poll(Duration.of......)
+
+Consumer assign & Seek - Replay Data/fetch specific message - Read from anywhere without subscription
+-TopicPartition <partition> = ...
+-consumer.seek(Arrays.asList(<Topicpartition>))
+-consumer.seek(<partition> , <offset>)
+-consumer.poll()
+
+Add shutdown hook
+Runtime.getRuntime().addShutdownHook(new Thread(()->{....shutdown func def....}))
+
+
+ADDITIONAL PRODUCER  CONFIGS
+min.insync.replicas : min ISR including brokers must acknowledge data arrival, otherwise exception
+defines broker shutdown tolerance
+broker / topic level
+DEFAULT =2
+
+
+retries: send failiure- default=0- MAX_VALUE for infinite trials
+max.in.flight.requests.per.connection=1 - to ensure ordering - default = 5
+
+Idempotent producer - Producer Request ID - avoid commit of duplicate requests : de-duplication - stable
+(retries to INt_MAX max.in.flight.requests ... =5 with ordering acks=all)
+producerProps.put("enable.idempotence",true)
+
+COMPRESSION of producer message: "cpmpression.type" -- "none", "gzip","lz4", "snappy"
+Smart Batching -- Messages clustered into batches - decrease latency - increase throughput - higher compression ratio
+linger.ms - wait time    batch.size - max allowed size (in KB)  :Producer metrics 
+
+max.block.ms
+
+
+Kafka connect - Data in & out of Kafka - Data transformation
+
+
+
+
+----------------------------------------------------
+kafka connect 
+kafka schema reg
+confluent 4.1.0
+confluent replicator
+105-112
