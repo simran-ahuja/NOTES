@@ -93,6 +93,37 @@ max.block.ms
 
 
 Kafka connect - Data in & out of Kafka - Data transformation
+Source -> Connect Cluster(Workers) -> Kafka Cluster (Brokers) -> Kafka streams (Java Library-Transform/ filter/ aggregate data, etc) ->Kafka Cluster  -> Connect cluster -> Data Sinks
+Sink Connectors & Source connectors (ETL pipeline)
+
+Kafka Streams- Java Lib - Data processing & transformation - one record processing at a time - from/to multiple topics 
+- no micro batching - fault tolerant
+-create properties - use StreamsConfig - Bootstrap Server, Application_id (Similar to consumer groups), Default key/value serde (serialize/deserialize--Serdes.StringSerde)
+-create topology - StreamsBuilder <..>= .....
+-input topic - KStream<...,...> <topic> = streamsBuilder.stream(...)
+-Processing - inputTopic.<filter>(corres. lambda func)
+-build topology
+-start our streams application
+
+
+Schema Registry - Separate component to keep in check the incoming data to consumer
+- avoid bad data - avoid data info loss & change in transfer
+- store & retrieve schema for producers & consumers
+- decrease payload size to kafka
+- Backward/ forward/ full compatibility on topics
+{Producer -> Kafka (Apache Avro content) + Producer -> Schema Registry (Schema) } ----->  {Kafka -> Consumer (avro) + Schema registry -> Consumer}
+
+TOPIC CONFIGURATIONS
+kafka-configs -- ZOOkeper ... --entity-type topics --entity-name <topic_name> --describe/ (add/delete-config <config>=<configvalue> -- alter)
+
+Partitions & Segments - Topics are made of partitions - Partitions are made of segments(start offset & end offset)
+-log.segment.bytes - max isze of segments - 1 GB - Keep high value
+-log.segment.ms - time before commit
+segment -- Index + Timestamp -- to read among segments
+Log Cleanup =delete log.cleanup.policy - delete topics on age & max size
+	    =compact -- delete for offsets info - based on keys
+	    -maintenace - avoid obsolete data 
+
 
 
 
