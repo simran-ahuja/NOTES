@@ -10,34 +10,47 @@ void calculate_digits()
         digits[k]=0;
         for(int i=0;k*i<9000;i++)
         {
-            digits+=log10(9000-k*i);
+            cout<<k*i<<" ";
+            digits[k]=digits[k]+log10(9000-k*i);
         }
-        
+        cout<<endl;
     }
+
 }
 
-int find_digit(int x)
+int find_digit(int x,int n)
 {
+    if(x>31682)
+        return 1;
     int l=0;
-    int h=n-1;
+    int h=n;
  
     while(l<h)
     {
         int mid=(l+h)/2;
-        if (x <= a[mid]) 
+        
+        if (x >= digits[mid]) 
         {
-            h = mid;
+            l=mid+1;
+            //h = mid;
         } 
         else 
         {
-            l = mid + 1;
+            h=mid;
+            //l = mid + 1;
         }
     }
-    return l;
+    return h;
     
 }
 
 int main()
 {
-    
+    calculate_digits();
+    cout<<digits[0]<<endl;
+    cout<<digits[1]<<endl;
+    cout<<digits[2]<<endl;
+    cout<<digits[1990]<<endl;
+    cout<<digits[156]<<endl;
+    return 0;
 }
