@@ -1,0 +1,43 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+vector<int> digits(9000);
+
+void calculate_digits()
+{
+    for(int k=1;k<=8999;k++)
+    {
+        digits[k]=0;
+        for(int i=0;k*i<9000;i++)
+        {
+            digits+=log10(9000-k*i);
+        }
+        
+    }
+}
+
+int find_digit(int x)
+{
+    int l=0;
+    int h=n-1;
+ 
+    while(l<h)
+    {
+        int mid=(l+h)/2;
+        if (x <= a[mid]) 
+        {
+            h = mid;
+        } 
+        else 
+        {
+            l = mid + 1;
+        }
+    }
+    return l;
+    
+}
+
+int main()
+{
+    
+}
