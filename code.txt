@@ -59,21 +59,93 @@ int main()
 
 
 
+
+
 #include<bits/stdc++.h>
 using namespace std;
 #define ll long long
 #define sci(t) scanf("%d",&t)
 
-long long count_ways(int r, int c)
+
+char get_direction(char d)
+{
+    if(d=='u')
+        return 'r';
+    else if(d=='r')
+        return 'd';
+    else if(d=='d')
+        return 'l';
+    return 'u';
+}
+
+pair<int,int> new_coordinates(char d, int r, int c)
+{
+    if(d=='u')
+        return {r-1,c};
+    else if(d=='r')
+        return {r,c+1};
+    if(d=='d')
+        return {r+1,c};
+    return {r,c-1};
+}
+
+
+int R,C;
+bool visited[25][25];
+
+void init()
+{
+    for(int r=0;r<R;r++)
+        for(int c=0;c<C;c++)
+            visited[r][c]=false;
+    visited[R-1][0]=true;
+}
+
+long long count_paths(int r, int c, char dir)
+{
+    ll paths=0;
+    pair<int,int> move;
+    int x,y;
+    move=new_coordinates(dir,r,c);
+    x=move.first;
+    y=move.second;
+    if(x>=0 && x<R && y>=0 && y<C && !visited[x][y])
+    {
+        visited[x][y]=true;
+        paths+=count_paths(x,y,dir);
+        visited[x][y]=false;
+    }
+    
+    dir=get_direction(dir);
+    move=new_coordinates(dir,r,c);
+    x=move.first;
+    y=move.second;
+    if(x>=0 && x<R && y>=0 && y<C && !visited[x][y])
+    {
+        visited[x][y]=true;
+        paths+=count_paths(x,y,dir);
+        visited[x][y]=false;
+    }
+    
+    cout<<r<<" "<<c<<" "<<paths<<endl;
+    return paths;
+}
+
+
+
 int main()
 {
     int t;
     sci(t);
     for(int c=1;c<=t;c++)
     {
-        int r,c;
-        sci(r);
-        sci(c);
+        sci(R);
+        sci(C);
+        
+        init();
+        ll paths=count_paths(R-1,0,'u')+1;
+        printf("Case #%d: %lld\n",c,paths);
+        
     }
     return 0;
 }
